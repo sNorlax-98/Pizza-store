@@ -1,0 +1,29 @@
+.logo {
+  width: 25%;
+}
+.header-div {
+  display: flex;
+}
+.footer-div {
+  display: flex;
+  color: aliceblue;
+  justify-content: space-around;
+  background-color: black;
+}
+.nav-div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: black;
+  color: aliceblue;
+}
+.nav-link {
+  margin: 1rem;
+  padding: auto;
+}
+a:visited {
+  text-decoration: none;
+}
+a {
+  text-decoration: none;
+}
