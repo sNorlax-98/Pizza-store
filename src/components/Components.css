@@ -3,12 +3,14 @@
 }
 .header-div {
   display: flex;
+  height: 20vh;
 }
 .footer-div {
   display: flex;
   color: aliceblue;
   justify-content: space-around;
   background-color: black;
+  height: 10vh;
 }
 .nav-div {
   display: flex;
@@ -26,4 +28,7 @@ a:visited {
 }
 a {
   text-decoration: none;
+}
+.cart-card-group {
+  height: 70vh;
 }
