@@ -4,8 +4,11 @@ const { Schema } = require("mongoose");
 const app = express();
 const port = 5000;
 const cors = require("cors");
+const bcrypt = require("bcrypt");
+const { createTokens, validateToken } = require("./jwt");
 
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
 const dataSchema = new Schema({
   name: String,
   price: Number,
@@ -29,6 +32,7 @@ app.use(cors({ origin: "*" }));
 JSON payloads. It basically allows the server to accept JSON data in the request body and parse it
 into a JavaScript object that can be used in the server-side code. */
 app.use(express.json());
+app.use(cookieParser());
 
 /* This code is defining a route for a GET request to the root endpoint ("/"). When a GET request is
 made to this endpoint, it creates a model for the "pizza" collection using the `mongoose.model()`
@@ -73,34 +77,56 @@ app.post("/cart", (req, res) => {
       res.send("send");
     });
 });
-/* This code is defining a route for handling a POST request to the "/login" endpoint. When a POST
+/* This code is defining a route for handling a POST request to the "/register" endpoint. When a POST
 request is made to this endpoint, it creates a model for the "user" collection using the
 `mongoose.model()` method, and then calls the `create()` method on the model to add a new document
 to the collection with the data provided in the request body (name, email, and password). Finally,
 it sends a JSON response with the message "successful registration". This code is used for
 registering a new user in the application. */
-app.post("/login", (req, res) => {
+app.post("/register", (req, res) => {
   const user = mongoose.model("user", userSchema);
   const { name, email, password } = req.body;
-  user
-    .create({
-      name,
-      email,
-      password,
-    })
-    .then((data) => {
-      res.json("sucessfull regiestration");
-    });
+  bcrypt.hash(password, 10).then((hash) => {
+    user
+      .create({
+        name,
+        email,
+        password: hash,
+      })
+      .then(() => {
+        res.json("sucessfull regiestration");
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
 });
 /* This code is defining a route for getting all the documents in the "user" collection in the MongoDB
 database. When a GET request is made to the "/login" endpoint, it creates a model for the "user"
 collection using the `mongoose.model()` method, and then calls the `find()` method on the model to
 retrieve all the documents in the collection. Finally, it sends a JSON response with the retrieved
 data. */
-app.get("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const user = mongoose.model("user", userSchema);
-  user.find({}).then((data) => {
-    res.json(data);
+  const { email, password } = req.body;
+  await user.findOne({ email }).then((data) => {
+    if (!data) {
+      console.log(password);
+      res.json("user not found");
+    } else {
+      const dbpassword = data.password;
+      bcrypt.compare(password, dbpassword).then((match) => {
+        if (match) {
+          const accessToken = createTokens(data);
+          res.cookie("access-token", accessToken, {
+            maxAge: 60 * 60 * 24 * 30,
+          });
+          res.json("login successfull");
+        } else {
+          res.json("password not match");
+        }
+      });
+    }
   });
 });
 
@@ -124,6 +150,15 @@ app.delete("/cart", (req, res) => {
   const cart = mongoose.model("Cart", dataSchema);
   cart.deleteMany({}).then((data) => {
     res.json("data");
+  });
+});
+
+app.get("/profile", validateToken, (req, res) => {
+  const user = mongoose.model("user", userSchema);
+  const username = req.body.email;
+  user.findOne({ email: username }).then((data) => {
+    console.log(data);
+    res.json(data);
   });
 });
 
