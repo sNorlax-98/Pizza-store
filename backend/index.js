@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 const { createTokens, validateToken } = require("./jwt");
 
 const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser");
+var cookieParser = require("cookie-parser");
 const dataSchema = new Schema({
   name: String,
   price: Number,
@@ -27,13 +27,17 @@ requests to a different domain than the one that served the web page. By setting
 server is allowing requests from any domain to access its resources. This is useful when building
 APIs that need to be accessed by different domains or when developing locally and testing with
 different front-end applications. */
-app.use(cors({ origin: "*" }));
-/* `app.use(express.json());` is a middleware function in Express that parses incoming requests with
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+}); /* `app.use(express.json());` is a middleware function in Express that parses incoming requests with
 JSON payloads. It basically allows the server to accept JSON data in the request body and parse it
 into a JavaScript object that can be used in the server-side code. */
 app.use(express.json());
 app.use(cookieParser());
-
 /* This code is defining a route for a GET request to the root endpoint ("/"). When a GET request is
 made to this endpoint, it creates a model for the "pizza" collection using the `mongoose.model()`
 method, and then calls the `find()` method on the model to retrieve all the documents in the
@@ -41,6 +45,14 @@ collection. Finally, it sends a JSON response with the retrieved data. */
 app.get("/", (req, res) => {
   const pizza = mongoose.model("pizza", dataSchema);
   pizza.find({}).then((data) => {
+    res.json(data);
+  });
+});
+
+app.get("/search", (req, res) => {
+  const pizza = mongoose.model("pizza", dataSchema);
+  const query = { name: req.query.name };
+  pizza.find(query).then((data) => {
     res.json(data);
   });
 });
@@ -111,16 +123,14 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   await user.findOne({ email }).then((data) => {
     if (!data) {
-      console.log(password);
       res.json("user not found");
     } else {
       const dbpassword = data.password;
       bcrypt.compare(password, dbpassword).then((match) => {
         if (match) {
           const accessToken = createTokens(data);
-          res.cookie("access-token", accessToken, {
-            maxAge: 60 * 60 * 24 * 30,
-          });
+          res.cookie("access-token", accessToken);
+          console.log("cookie set");
           res.json("login successfull");
         } else {
           res.json("password not match");
@@ -153,7 +163,7 @@ app.delete("/cart", (req, res) => {
   });
 });
 
-app.get("/profile", validateToken, (req, res) => {
+app.get("/profile", (req, res) => {
   const user = mongoose.model("user", userSchema);
   const username = req.body.email;
   user.findOne({ email: username }).then((data) => {

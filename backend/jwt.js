@@ -10,6 +10,12 @@ const createTokens = (user) => {
 
 const validateToken = (req, res, next) => {
   const accessToken = req.cookies["access-token"];
+  res.cookie("access-token", accessToken, {
+    maxAge: 60 * 60 * 24 * 30 * 10,
+    httpOnly: true,
+    domain: "localhost",
+  });
+
   if (!accessToken) {
     return res.json({ error: "User not authenticated" });
   }

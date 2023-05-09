@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/food-facebook-cover-15.jpg";
+import logo from "../assets/logo.png";
 import "./components.css";
 import { Link } from "react-router-dom";
 
@@ -10,10 +10,10 @@ const Header = () => {
         <img className="logo" src={logo} />
       </div>
       <div className="nav-div">
-        <Link to="/cart" className="nav-link">
+        <Link to="/cart" className="nav-link cart">
           Cart
         </Link>
-        <Link to="/profile" className="nav-link">
+        <Link to="/profile" className="nav-link profile">
           Profile
         </Link>
       </div>
