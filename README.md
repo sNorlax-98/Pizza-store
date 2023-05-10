@@ -35,7 +35,6 @@ This project is an only pizza delivery store.
 
 ## How to Run?
 
-This project was created using Django web framework. To run the project
 
 1. clone the github repository.
 2. install node.js.
