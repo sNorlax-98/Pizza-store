@@ -6,24 +6,24 @@ This project is an only pizza delivery store.
 
 1. #### Registration Page
 
-   ![Registration Page](../new-app/ss%20for%20md/signup.PNG)
+   ![Registration Page](./ss%20for%20md/signup.PNG)
 
 2. #### Login Page
    Users can Login here in their old account.
 
-![Login Page](../new-app/ss%20for%20md/login.PNG)
+![Login Page](./ss%20for%20md/login.PNG)
 
 4. #### Product Page
    This is the full menu.
    Can be filtered by name.
    Can be filtered by veg category.
 
-![Product Page](../new-app/ss%20for%20md/home.PNG)
+![Product Page](./ss%20for%20md/home.PNG)
 
 6. #### Cart
    This is a wishlist that users can add items to come back to later or checkout .
 
-![Cart](../new-app/ss%20for%20md/cart.PNG)
+![Cart](./ss%20for%20md/cart.PNG)
 
 7. #### Shows your Profile details
 
