@@ -23,7 +23,7 @@ const Profile = () => {
   return (
     <>
       <Header />
-      <div className="card-group">
+      <div className="card-group profile-div">
         {data.map((item) => {
           return (
             <div className="profile-card">
