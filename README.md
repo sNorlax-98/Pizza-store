@@ -23,7 +23,7 @@ This project is an only pizza delivery store.
 6. #### Cart
    This is a wishlist that users can add items to come back to later or checkout .
 
-![Cart](./ss%20for%20md/cart.PNG)
+![Cart](./ss%20for%20md/Cart.PNG)
 
 7. #### Shows your Profile details
 
