@@ -20,28 +20,26 @@ const userSchema = new Schema({
   email: String,
   password: String,
 });
+const cartSchema = new Schema({
+  id: String,
+  name: String,
+  price: Number,
+  categories: String,
+  imgUrl: String,
+});
 mongoDB();
-/* `app.use(cors({ origin: "*" }));` is setting up Cross-Origin Resource Sharing (CORS) for the Express
-app. CORS is a security feature implemented in web browsers that restricts web pages from making
-requests to a different domain than the one that served the web page. By setting `origin: "*"`, the
-server is allowing requests from any domain to access its resources. This is useful when building
-APIs that need to be accessed by different domains or when developing locally and testing with
-different front-end applications. */
+
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader("Access-Control-Allow-Credentials", true);
   next();
-}); /* `app.use(express.json());` is a middleware function in Express that parses incoming requests with
-JSON payloads. It basically allows the server to accept JSON data in the request body and parse it
-into a JavaScript object that can be used in the server-side code. */
+});
+
 app.use(express.json());
 app.use(cookieParser());
-/* This code is defining a route for a GET request to the root endpoint ("/"). When a GET request is
-made to this endpoint, it creates a model for the "pizza" collection using the `mongoose.model()`
-method, and then calls the `find()` method on the model to retrieve all the documents in the
-collection. Finally, it sends a JSON response with the retrieved data. */
+
 app.get("/", (req, res) => {
   const pizza = mongoose.model("pizza", dataSchema);
   pizza.find({}).then((data) => {
@@ -57,12 +55,6 @@ app.get("/search", (req, res) => {
   });
 });
 
-/* This code is defining a route for getting all the documents in the "pizza" collection in the MongoDB
-database where the "categories" field is equal to "veg". When a GET request is made to the "/veg"
-endpoint, it creates a model for the "pizza" collection using the `mongoose.model()` method, and
-then calls the `find()` method on the model with a query object to retrieve all the documents in the
-collection where the "categories" field is equal to "veg". Finally, it sends a JSON response with
-the retrieved data. */
 app.get("/veg", (req, res) => {
   const pizza = mongoose.model("pizza", dataSchema);
   pizza.find({ categories: "veg" }).then((data) => {
@@ -70,31 +62,22 @@ app.get("/veg", (req, res) => {
   });
 });
 
-/* This code is defining a route for adding a new document to the "Cart" collection in the MongoDB
-database. When a POST request is made to the "/cart" endpoint, it creates a model for the "Cart"
-collection using the `mongoose.model()` method, and then calls the `create()` method on the model to
-add a new document to the collection with the data provided in the request body. Finally, it sends a
-response with the message "send". */
 app.post("/cart", (req, res) => {
-  const cart = mongoose.model("Cart", dataSchema);
-  const { name, price, categories, imgUrl } = req.body;
-  cart
+  const food = mongoose.model("food", cartSchema);
+  const { name, price, categories, imgUrl, _id } = req.body;
+  food
     .create({
       name,
       price,
       categories,
       imgUrl,
+      _id,
     })
     .then((data) => {
       res.send("send");
     });
 });
-/* This code is defining a route for handling a POST request to the "/register" endpoint. When a POST
-request is made to this endpoint, it creates a model for the "user" collection using the
-`mongoose.model()` method, and then calls the `create()` method on the model to add a new document
-to the collection with the data provided in the request body (name, email, and password). Finally,
-it sends a JSON response with the message "successful registration". This code is used for
-registering a new user in the application. */
+
 app.post("/register", (req, res) => {
   const user = mongoose.model("user", userSchema);
   const { name, email, password } = req.body;
@@ -113,11 +96,7 @@ app.post("/register", (req, res) => {
       });
   });
 });
-/* This code is defining a route for getting all the documents in the "user" collection in the MongoDB
-database. When a GET request is made to the "/login" endpoint, it creates a model for the "user"
-collection using the `mongoose.model()` method, and then calls the `find()` method on the model to
-retrieve all the documents in the collection. Finally, it sends a JSON response with the retrieved
-data. */
+
 app.post("/login", async (req, res) => {
   const user = mongoose.model("user", userSchema);
   const { email, password } = req.body;
@@ -130,7 +109,6 @@ app.post("/login", async (req, res) => {
         if (match) {
           const accessToken = createTokens(data);
           res.cookie("access-token", accessToken);
-          console.log("cookie set");
           res.json("login successfull");
         } else {
           res.json("password not match");
@@ -140,34 +118,35 @@ app.post("/login", async (req, res) => {
   });
 });
 
-/* This code is defining a route for getting all the documents in the "Cart" collection in the MongoDB
-database. When a GET request is made to the "/cart" endpoint, it creates a model for the "Cart"
-collection using the `mongoose.model()` method, and then calls the `find()` method on the model to
-retrieve all the documents in the collection. Finally, it sends a JSON response with the retrieved
-data. */
 app.get("/cart", (req, res) => {
-  const cart = mongoose.model("Cart", dataSchema);
-  cart.find({}).then((data) => {
+  const food = mongoose.model("food", cartSchema);
+  food.find({}).then((data) => {
     res.json(data);
   });
 });
-/* This code is defining a route for deleting all the documents in the "Cart" collection in the MongoDB
-database. When a DELETE request is made to the "/cart" endpoint, it creates a model for the "Cart"
-collection using the `mongoose.model()` method, and then calls the `deleteMany()` method on the
-model to delete all the documents in the collection. Finally, it sends a JSON response with the
-message "data". */
+
 app.delete("/cart", (req, res) => {
-  const cart = mongoose.model("Cart", dataSchema);
-  cart.deleteMany({}).then((data) => {
+  const food = mongoose.model("food", cartSchema);
+  food.deleteMany({}).then((data) => {
+    res.json("data");
+  });
+});
+app.delete("/cart/:id", (req, res) => {
+  const food = mongoose.model("food", cartSchema);
+  food.deleteOne({ _id: req.params.id }).then((data) => {
     res.json("data");
   });
 });
 
+app.delete("/profile", (req, res) => {
+  const user = mongoose.model("user", userSchema);
+  user.deleteMany({}).then((data) => {
+    res.json("data");
+  });
+});
 app.get("/profile", (req, res) => {
   const user = mongoose.model("user", userSchema);
-  const username = req.body.email;
-  user.findOne({ email: username }).then((data) => {
-    console.log(data);
+  user.find({}).then((data) => {
     res.json(data);
   });
 });

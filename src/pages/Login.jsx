@@ -15,6 +15,7 @@ const Login = () => {
       .post("http://localhost:5000/login", { email, password })
       .then((res) => {
         console.log(res);
+        window.location.href = "/home";
       })
       .catch((err) => console.log(err));
     redirect("/home");
@@ -27,6 +28,7 @@ const Login = () => {
         console.log(res);
       })
       .catch((err) => console.log(err));
+    alert("Registered Successfully");
   };
 
   return (

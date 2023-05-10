@@ -30,6 +30,29 @@ const Home = () => {
         console.log(err);
       });
   };
+  const handleRemove = (_id) => {
+    axios
+      .delete(`http://localhost:5000/cart/${_id}`)
+      .then((res) => {})
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleAdd = (name, price, categories, imgUrl, _id) => {
+    axios
+      .post("http://localhost:5000/cart", {
+        name,
+        price,
+        categories,
+        imgUrl,
+        _id,
+      })
+      .then((res) => {})
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <>
@@ -76,8 +99,26 @@ const Home = () => {
                   <h5 className="item">₹{item.price}</h5>
                   <h5 className="item">catogory: {item.categories}</h5>
                   <div className="button-div">
-                    <button className="button">Add to cart</button>
-                    <button className="button">Remove</button>
+                    <button
+                      className="button"
+                      onClick={() =>
+                        handleAdd(
+                          item.name,
+                          item.price,
+                          item.categories,
+                          item.imgUrl,
+                          item._id
+                        )
+                      }
+                    >
+                      Add to cart
+                    </button>
+                    <button
+                      className="button"
+                      onClick={() => handleRemove(item._id)}
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
               </div>

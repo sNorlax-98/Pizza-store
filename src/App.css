@@ -162,3 +162,28 @@
   margin: 1rem;
   color: aliceblue;
 }
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid white;
+  height: 10rem;
+  width: 20rem;
+  margin: 1rem;
+  padding: 1rem;
+}
+.cart-card-group {
+  margin-top: 5rem;
+}
+.cart-controls {
+  display: flex;
+  position: absolute;
+  margin-left: 90%;
+  margin-top: 2rem;
+}
+.cart-total {
+  text-align: center;
+  color: white;
+  margin-top: 7rem;
+}
