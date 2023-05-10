@@ -40,14 +40,14 @@ app.use(function (req, res, next) {
 app.use(express.json());
 app.use(cookieParser());
 
-app.get("/", (req, res) => {
+app.get("/", validateToken, (req, res) => {
   const pizza = mongoose.model("pizza", dataSchema);
   pizza.find({}).then((data) => {
     res.json(data);
   });
 });
 
-app.get("/search", (req, res) => {
+app.get("/search", validateToken, (req, res) => {
   const pizza = mongoose.model("pizza", dataSchema);
   const query = { name: req.query.name };
   pizza.find(query).then((data) => {
@@ -55,14 +55,14 @@ app.get("/search", (req, res) => {
   });
 });
 
-app.get("/veg", (req, res) => {
+app.get("/veg", validateToken, (req, res) => {
   const pizza = mongoose.model("pizza", dataSchema);
   pizza.find({ categories: "veg" }).then((data) => {
     res.json(data);
   });
 });
 
-app.post("/cart", (req, res) => {
+app.post("/cart", validateToken, (req, res) => {
   const food = mongoose.model("food", cartSchema);
   const { name, price, categories, imgUrl, _id } = req.body;
   food
@@ -118,33 +118,33 @@ app.post("/login", async (req, res) => {
   });
 });
 
-app.get("/cart", (req, res) => {
+app.get("/cart", validateToken, (req, res) => {
   const food = mongoose.model("food", cartSchema);
   food.find({}).then((data) => {
     res.json(data);
   });
 });
 
-app.delete("/cart", (req, res) => {
+app.delete("/cart", validateToken, (req, res) => {
   const food = mongoose.model("food", cartSchema);
   food.deleteMany({}).then((data) => {
     res.json("data");
   });
 });
-app.delete("/cart/:id", (req, res) => {
+app.delete("/cart/:id", validateToken, (req, res) => {
   const food = mongoose.model("food", cartSchema);
   food.deleteOne({ _id: req.params.id }).then((data) => {
     res.json("data");
   });
 });
 
-app.delete("/profile", (req, res) => {
+app.delete("/profile", validateToken, (req, res) => {
   const user = mongoose.model("user", userSchema);
   user.deleteMany({}).then((data) => {
     res.json("data");
   });
 });
-app.get("/profile", (req, res) => {
+app.get("/profile", validateToken, (req, res) => {
   const user = mongoose.model("user", userSchema);
   user.find({}).then((data) => {
     res.json(data);
